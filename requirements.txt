@@ -1,0 +1,16 @@
+numpy>=1.24
+scipy>=1.10
+pyyaml>=6.0
+scikit-learn>=1.2      # step07 經典基線對照(LASSO / RF / CV-AUC)
+# 下載真實 GEO 資料時需要(demo 模式免裝):
+GEOparse>=2.0
+# 選用:交叉驗證 QUBO->Ising 轉換、或用 D-Wave 生態求解:
+# dimod>=0.12
+# dwave-neal>=0.6
+# GPU 求解器 solve_gpu.py:裝了 torch(+CUDA)才會用 GPU;沒裝則自動退回 NumPy。
+# 在 DGX-B200 上請依其 CUDA 版本安裝對應 wheel,例如:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu124
+# torch>=2.2
+# 選用(step06 線上通路富集;不裝則用本地 GMT 超幾何檢定):
+# gseapy>=1.1
+# 註:step06 的 Open Targets 查詢只用 Python 標準庫 urllib,無需額外套件。

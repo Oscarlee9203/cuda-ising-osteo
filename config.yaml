@@ -1,0 +1,111 @@
+# ==========================================================================
+# CUDA-Ising 骨質疏鬆基因/標的探勘 — 設定檔 (建模 A: QUBO 特徵選擇)
+# ==========================================================================
+# 說明:整條 pipeline 都讀這個檔。改參數只需要動這裡,不必改程式碼。
+# --------------------------------------------------------------------------
+
+project_name: osteo_qubo
+
+# ---- 資料來源 ----------------------------------------------------------
+data:
+  # loader 決定 step01 走哪個路徑:
+  #   "demo"     -> 合成資料,離線可驗證整條 pipeline(不需網路/GEOparse)
+  #   "gse56815" -> 已寫死欄位解析的真實 GEO series(見下方註解),需網路
+  #   "generic"  -> 泛用 GEO 解析(欄位命名不一定準,通常要自己微調)
+  loader: "gse56815"
+
+  # ---- demo 專用 ----
+  demo_n_genes: 400
+  demo_n_samples: 60
+  demo_n_true_genes: 15
+  demo_seed: 42
+
+  # ---- GSE56815(已驗證欄位結構,寫死於 step01)----
+  # Zhou et al. 循環單核球,GPL96 (Affymetrix HG-U133A),80 例:
+  #   40 high BMD + 40 low BMD(各含 20 pre + 20 postmenopausal 婦女)
+  # 病例=low BMD(骨質較差),對照=high BMD。
+  # 每個樣本的 characteristics_ch1 實際長這樣(已從 GEO 逐筆核對):
+  #   "gender: Female"
+  #   "bone mineral density: high BMD"  /  "low BMD"
+  #   "state: postmenopausal"           /  "premenopausal"
+  #   "cell type: monocytes"
+  geo_accession: "GSE56815"
+  platform: "GPL96"
+  collapse_to_symbol: true     # 用 GPL96 註解把 probe 併成 gene symbol
+  # 只留特定停經狀態可減少異質性;null=全用,或填 "postmenopausal"/"premenopausal"
+  restrict_state: null
+
+# ---- 特徵計算 ----------------------------------------------------------
+features:
+  # 相關性 R_i 的算法:
+  #   "auc"    -> 以單基因區分病例/對照的 |AUC-0.5|*2(穩健、免分佈假設)
+  #   "ttest"  -> -log10(p) of Welch t-test
+  #   "corr"   -> 與表型 label 的 |Pearson r|
+  relevance_metric: "auc"
+  # 先用相關性做預篩,只留前 top_genes 個基因進 QUBO(控制問題規模)。
+  # 設為 0 代表不預篩(全基因體規模,適合 B200)。
+  top_genes: 300
+  # 冗餘度 C_ij 的算法:基因間表現量 |Pearson| 或 |Spearman|
+  redundancy_metric: "pearson"
+  # 只有 |相關| 超過這個門檻才視為冗餘邊,避免稠密矩陣(0 = 全連接)
+  redundancy_threshold: 0.6
+
+# ---- QUBO / Ising 目標函數 ---------------------------------------------
+# minimize  -alpha * sum_i R_i x_i  +  beta * sum_{i<j} C_ij x_i x_j
+#           +  lam * (sum_i x_i - k)^2
+qubo:
+  alpha: 1.0      # 相關性獎勵權重
+  beta: 1.0       # 冗餘懲罰權重
+  lam: 2.0        # 基數約束權重
+  k: 20           # 目標選出的基因數
+  normalize: true # 把 R_i、C_ij 各自縮放到 [0,1],讓權重可比較
+
+# ---- 匯出給 CUDA-Ising 的格式 ------------------------------------------
+export:
+  # 支援多種常見格式,依你的 CUDA-Ising repo 選一個(可全開):
+  #   coo_txt   -> 純文字 COO:先一行 "N M",其後 "i j J" 與對角 "i i h"
+  #   npz       -> numpy .npz(J 稠密矩陣 + h 向量),Python 端最好用
+  #   dimod_json-> D-Wave dimod BQM 的 JSON(OpenJij / dwave 生態可直接讀)
+  formats: ["coo_txt", "npz", "dimod_json"]
+  spin_convention: "ising"   # "ising" 用 s∈{-1,+1};"qubo" 用 x∈{0,1}
+
+# ---- 參數掃描 ----------------------------------------------------------
+sweep:
+  alpha: [1.0]
+  beta:  [0.5, 1.0, 2.0]
+  lam:   [1.0, 2.0, 4.0]
+  k:     [15, 20, 30]
+
+# ---- step06:新穎性標註(Open Targets)---------------------------------
+novelty:
+  efo_id: "MONDO_0005298"        # osteoporosis 的 EFO 疾病代碼
+  disease_name: "osteoporosis"
+  ot_score_threshold: 0.1      # Open Targets 關聯分數 >= 此值 -> 視為「已知」
+  ot_page_size: 500            # 抓多少個關聯 target
+  known_genes_fallback: "data/known_osteoporosis_genes.txt"  # 連不到 API 時的策展清單
+
+# ---- step06:通路富集 --------------------------------------------------
+enrichment:
+  method: "auto"               # auto -> 先試 Enrichr,失敗改本地 GMT;也可強制 enrichr/local/off
+  enrichr_libraries:           # 線上 Enrichr 用的 gene set 庫
+    - "GO_Biological_Process_2023"
+    - "KEGG_2021_Human"
+    - "Reactome_2022"
+    - "WikiPathway_2023_Human"
+  gmt_path: null               # 本地/離線富集用的 GMT(可從 Enrichr/MSigDB 下載)
+  top_candidates: 50           # 只對 select_freq 前 N 個候選做富集
+  fdr: 0.05
+
+# ---- step08:外部世代複製 ----------------------------------------------
+replication:
+  # 第二份獨立 osteoporosis series。GSE56814 = GSE56815 的姊妹資料:
+  # 同一實驗室、同樣 high/low BMD 單核球表型,但用「不同平台」
+  # GPL5175(Affymetrix Human Exon 1.0 ST,73 例:42 high + 31 low)。
+  # 換平台複製更有說服力(跨技術)。gene symbol 由 gene_assignment 欄解析。
+  geo_accession: "GSE56814"
+  platform: "GPL5175"
+  restrict_state: null         # 同 discovery,可只留某停經狀態
+  panel: "ising"               # 要複製哪組基因:ising(candidates 前 k)/ all(全 candidates)
+
+paths:
+  workdir: "outputs"

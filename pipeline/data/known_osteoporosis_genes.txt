@@ -1,0 +1,74 @@
+# 已知骨質疏鬆 / 骨密度(BMD)相關基因 —— 離線 fallback 清單
+# 用途:當 step06 連不到 Open Targets 時,用這份清單判定「已知 vs 新穎」。
+# 內容為文獻與大型 GWAS 反覆確立的骨骼相關基因(WNT 路徑、RANK-RANKL-OPG、
+# 雌激素、膠原/骨基質、維生素 D 等),整理自:
+#   - Estrada et al. 2012 Nat Genet (GEFOS-2, 56 BMD loci)
+#   - Morris et al. 2019 Nat Genet (UK Biobank eBMD, 500+ loci)
+#   - Richards et al. 2008 NEJM (LRP5/SOST/ESR1 等)
+#   - Zheng et al. 2015 Nature (EN1 等)
+#   - 經典功能基因(RUNX2/SP7/COL1A1 等)
+# 註:此為「保守常識版」核心清單,非窮舉。正式分析請以 Open Targets 即時查詢為主,
+#     這份只是離線時的合理替代。以 '#' 開頭的行會被忽略。
+#
+# --- WNT / β-catenin 訊號 ---
+LRP5
+LRP4
+WNT16
+WNT4
+WNT5B
+WNT3
+SOST
+DKK1
+CTNNB1
+AXIN1
+SFRP4
+MEF2C
+WLS
+RSPO3
+SPTBN1
+CPED1
+JAG1
+FOXL1
+EN1
+GPR68
+# --- RANK / RANKL / OPG(破骨細胞軸)---
+TNFRSF11A
+TNFSF11
+TNFRSF11B
+# --- 雌激素 / 荷爾蒙 ---
+ESR1
+ESR2
+PTH
+PTHLH
+CYP19A1
+# --- 膠原 / 骨基質 / 成骨細胞分化 ---
+COL1A1
+COL1A2
+SPP1
+SP7
+RUNX2
+BGLAP
+BMP2
+SMAD3
+MEPE
+IBSP
+ALPL
+# --- 維生素 D / 礦化 ---
+VDR
+GC
+CASR
+FGF23
+GALNT3
+PHEX
+DMP1
+# --- 其他反覆出現的 BMD loci ---
+ZBTB40
+STARD3NL
+FAM3C
+MHC-region
+IDUA
+CRHR1
+FUBP3
+DHH
+KLHDC5
+GPATCH1

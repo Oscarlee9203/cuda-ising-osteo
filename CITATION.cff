@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+title: "CUDA-Ising-Osteo: a reproducible GPU Ising/QUBO pipeline for gene-target discovery"
+type: software
+authors:
+  - family-names: Chen
+    given-names: Yun-Lin
+    affiliation: "MacKay Memorial Hospital, Taipei, Taiwan"
+  - family-names: Ou
+    given-names: Chia-Ho
+    affiliation: "Tohoku University, Sendai, Japan; National Pingtung University, Pingtung, Taiwan"
+    orcid: "https://orcid.org/0000-0001-8897-670X"
+  - family-names: Lee
+    given-names: Oscar Kuang-Sheng
+    affiliation: "MacKay Memorial Hospital, Taipei, Taiwan"
+    orcid: "https://orcid.org/0000-0001-5232-5374"
+version: "1.0.0"
+date-released: "2026-09-05"
+license: MIT
+repository-code: "https://github.com/Oscarlee9203/cuda-ising-osteo"
+url: "https://github.com/Oscarlee9203/cuda-ising-osteo"
+doi: "10.5281/zenodo.22333934"
+keywords:
+  - Ising model
+  - QUBO
+  - GPU parallel tempering
+  - quantum-inspired optimisation
+  - osteoporosis
+  - WNT signalling
+  - network-module optimisation
+  - cross-cohort replication
+  - gene-target discovery

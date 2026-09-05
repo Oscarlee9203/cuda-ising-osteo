@@ -1,0 +1,45 @@
+{
+  "title": "CUDA-Ising-Osteo: a reproducible GPU Ising/QUBO pipeline for genetics-anchored gene-target discovery in osteoporosis",
+  "description": "Open-source, GPU-accelerated Ising/QUBO (batched parallel-tempering) solver and fully reproducible pipeline accompanying the article 'Genetics-anchored network optimisation prioritises druggable WNT-pathway targets for osteoporosis, while monocyte expression signatures fail to replicate: a reproducible GPU Ising/QUBO pipeline'. The repository contains the solver, the two target-discovery formulations (expression-based QUBO feature selection and GWAS-seeded STRING network-module optimisation), the cross-cohort replication protocol, the edge-term ablation and solver-robustness analyses, the orthogonal-validation retrieval scripts, derived matrices, the curated 56-gene seed list, configuration files, candidate tables and figure-generation code. Primary data sources: NCBI GEO series GSE56815, GSE56814 and GSE7158; STRING v12.0 (Homo sapiens, taxon 9606); the Open Targets Platform. Released under the MIT licence.",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "mit",
+  "version": "1.0.0",
+  "language": "eng",
+  "keywords": [
+    "Ising model",
+    "QUBO",
+    "parallel tempering",
+    "GPU",
+    "quantum-inspired optimisation",
+    "osteoporosis",
+    "WNT signalling",
+    "feature selection",
+    "network-module optimisation",
+    "cross-cohort replication",
+    "gene-target discovery"
+  ],
+  "creators": [
+    {
+      "name": "Chen, Yun-Lin",
+      "affiliation": "MacKay Memorial Hospital, Taipei, Taiwan"
+    },
+    {
+      "name": "Ou, Chia-Ho",
+      "affiliation": "Tohoku University, Sendai, Japan; National Pingtung University, Pingtung, Taiwan",
+      "orcid": "0000-0001-8897-670X"
+    },
+    {
+      "name": "Lee, Oscar Kuang-Sheng",
+      "affiliation": "MacKay Memorial Hospital, Taipei, Taiwan",
+      "orcid": "0000-0001-5232-5374"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Oscarlee9203/cuda-ising-osteo",
+      "relation": "isSupplementedBy",
+      "scheme": "url"
+    }
+  ]
+}
